@@ -1,11 +1,22 @@
 /*
-    deferred.js v 0.1.0
+    deferred.js v 0.2.0
     Author: Sudhanshu Yadav
-    Copyright (c) 2015 Sudhanshu Yadav - ignitersworld.com , released under the MIT license.
+    Copyright (c) 2015,2016 Sudhanshu Yadav - ignitersworld.com , released under the MIT license.
     https://github.com/s-yadav/deferred
 */
+(function(factory) {
+    const root = Function('return this')() || (42, eval)('this');
 
-;(function() {
+    if (typeof define === "function" && define.amd) {
+        define([], function() {
+            return (root.$def = factory());
+        });
+    } else if (typeof module === "object" && module.exports) {
+        module.exports = (root.$def = factory());
+    } else {
+        root.$def = factory(root.postal);
+    }
+}(function() {
     function Deferred() {
         //arrays to maintain the promise callbacks
         var doneCallback = [];
@@ -21,10 +32,22 @@
                 return state;
             },
             then: function(onResolve, onReject, onProgress) {
-                if (onResolve) doneCallback.push(onResolve);
-                if (onReject) failCallback.push(onReject);
-                if (onProgress) progressCallback.push(onProgress);
-                return this;
+                //add a new Deferred
+                var defer = Deferred();
+
+                if (onResolve) doneCallback.push({
+                    callback: onResolve,
+                    defer: defer
+                });
+                if (onReject) failCallback.push({
+                    callback: onReject,
+                    defer: defer
+                });
+                if (onProgress) progressCallback.push({
+                    callback: onProgress,
+                    defer: defer
+                });
+                return defer.promise();
             },
             done: function(onResolve) {
                 return this.then(onResolve);
@@ -43,27 +66,35 @@
         //deferred object
         var defer = Object.create(promise);
 
+        function resetCallbacks() {
+            doneCallback = [];
+            failCallback = [];
+            progressCallback = [];
+        }
+
         defer.resolve = function(value) {
             state = "resolved";
-            for (var i = 0, ln = doneCallback.length; i < ln; i++) {
-                var callback = doneCallback[i];
-                value = callback(value);
-            }
+            doneCallback.forEach(function(callbackObj) {
+                var updatedValue = callbackObj.callback(value);
+                callbackObj.defer.resolve(updatedValue);
+            });
+            resetCallbacks();
         }
 
         defer.reject = function(reason) {
             state = "rejected";
-            for (var i = 0, ln = failCallback.length; i < ln; i++) {
-                var callback = failCallback[i];
-                reason = callback(reason);
-            }
+            failCallback.forEach(function(callbackObj) {
+                var updatedReason = callbackObj.callback(reason);
+                callbackObj.defer.reject(updatedReason);
+            });
+            resetCallbacks();
         }
 
         defer.notify = function(value) {
-            for (var i = 0, ln = progressCallback.length; i < ln; i++) {
-                var callback = progressCallback[i];
-                value = callback(data);
-            }
+            progressCallback.forEach(function(callbackObj) {
+                var updatedReason = callbackObj.callback(reason);
+                callbackObj.defer.notify(updatedReason);
+            });
         }
 
         defer.promise = function() {
@@ -76,7 +107,9 @@
 
     var $def = function(callback) {
         var defer = Deferred();
-        callback(defer.resolve, defer.reject, defer.notify);
+        setTimeout(() => {
+            callback(defer.resolve, defer.reject, defer.notify);
+        }, 0);
         return defer.promise();
     }
 
@@ -88,28 +121,26 @@
         var promises = Array.prototype.slice.call(arguments);
         var defer = Deferred(),
             rejected,
-            successCounter = 0;
-        promisesData = [];
-        for (var i = 0, ln = promises.length; i < ln; i++) {
-            (function(i) {
-                promises[i].then(function(data) {
-                    if (rejected) return;
-                    //maintain a count and when all are resolved resolve when promise
-                    successCounter++;
-                    promisesData[i] = data;
-                    if (successCounter == promises.length) {
-                        defer.resolve(promisesData);
-                    }
-                }, function(data) {
-                    //reject if any of promise fails
-                    defer.reject(data);
-                    rejected = true;
-                });
-            }(i));
-        }
+            successCounter = 0,
+            promisesData = [];
+
+        promises.forEach(function(promise, idx) {
+            promise.then(function(data) {
+                if (rejected) return;
+                //maintain a count and when all are resolved resolve when promise
+                successCounter++;
+                promisesData[idx] = data;
+                if (successCounter == promises.length) {
+                    defer.resolve(promisesData);
+                }
+            }, function(data) {
+                //reject if any of promise fails
+                defer.reject(data);
+                rejected = true;
+            });
+        });
+
         return defer.promise();
     };
-
-    var global = Function('return this')() || (42, eval)('this');
-    global.$def = $def;
-}());
+    return $def;
+}));
