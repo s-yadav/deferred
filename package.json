@@ -1,0 +1,23 @@
+{
+  "name": "mini-deferred",
+  "version": "0.3.0",
+  "description": "A mini deferred plugin, having just what you need.",
+  "keywords": [
+    "deferred",
+    "promise",
+    "when-then"
+  ],
+  "main": "./deferred.js",
+  "author": {
+    "name": "Sudhanshu Yadav",
+    "email": "sudhanshuyadav2@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/s-yadav/deferred/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/s-yadav/deferred"
+  },
+  "license": "MIT"
+}

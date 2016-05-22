@@ -1,5 +1,15 @@
 # deferred
-A mini deferred plugin, having just what you want
+A mini deferred plugin, having just what you need.
+
+This module is published with UMD support, globally accessible via $def variable. It is also available on npm named mini-deferred.
+
+NPM Installation
+```js
+npm install mini-deferred --save
+```
+```js
+var $def = require('mini-deferred');
+```
 
 Usage
 **$def method**
@@ -47,7 +57,7 @@ $.ajax({
        error : defer.reject,
        progress : defer.notify
     })
-    
+
 var promise2 = defer.promise();    
 ```
 
