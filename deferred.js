@@ -1,5 +1,5 @@
 /*
-    deferred.js v 0.3.0
+    deferred.js v 0.3.2
     Author: Sudhanshu Yadav
     Copyright (c) 2015,2016 Sudhanshu Yadav - ignitersworld.com , released under the MIT license.
     https://github.com/s-yadav/deferred
@@ -140,6 +140,8 @@
             rejected,
             successCounter = 0,
             promisesData = [];
+
+        if(!promises.length) defer.resolve();
 
         promises.forEach(function(promise, idx) {
             promise.then(function(data) {
