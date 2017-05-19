@@ -58,7 +58,7 @@ $.ajax({
        progress : defer.notify
     })
 
-var promise2 = defer.promise();    
+var promise2 = defer.promise();
 ```
 
 **Doing something after multiple promise $def.when()**
@@ -94,8 +94,8 @@ promise.progress(onProgress);
 **promise.always()**
 ```js
 promise.always(function(data){
-  //comes here weather its success or fail
+  // comes here whether it's success or fail
 });
 ```
 
-**promise.state()** // return state of promise
+**promise.state()** `// return state of promise`
