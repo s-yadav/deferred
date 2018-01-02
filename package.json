@@ -1,6 +1,6 @@
 {
   "name": "mini-deferred",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "description": "A mini deferred plugin, having just what you need.",
   "keywords": [
     "deferred",

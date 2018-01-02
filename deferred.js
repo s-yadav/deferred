@@ -124,9 +124,7 @@
 
     var $def = function(callback) {
         var defer = Deferred();
-        setTimeout(function(){
-            callback(defer.resolve, defer.reject, defer.notify);
-        }, 0);
+        callback(defer.resolve, defer.reject, defer.notify);
         return defer.promise();
     };
 
