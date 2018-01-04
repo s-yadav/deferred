@@ -1,7 +1,7 @@
 /*
-    deferred.js v 0.3.2
+    deferred.js v 0.3.3
     Author: Sudhanshu Yadav
-    Copyright (c) 2015,2016 Sudhanshu Yadav - ignitersworld.com , released under the MIT license.
+    Copyright (c) 2015-2018 Sudhanshu Yadav - ignitersworld.com , released under the MIT license.
     https://github.com/s-yadav/deferred
 */
 (function(factory) {
